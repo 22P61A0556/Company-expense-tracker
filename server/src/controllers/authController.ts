@@ -1,7 +1,6 @@
 import { pbkdf2Sync, randomBytes, timingSafeEqual } from "node:crypto";
 import type { Request, Response } from "express";
-import { sign } from "jsonwebtoken";
-import { env } from "../config/env";
+import jwt from "jsonwebtoken";
 import { User } from "../models/User";
 import type { AuthUserPayload } from "../types/auth";
 
@@ -86,9 +85,15 @@ export async function login(req: Request, res: Response) {
       return res.status(401).json({ message: "Invalid credentials." });
     }
 
-    const payload = toAuthPayload(user);
-    const token = sign(payload, env.jwtSecret, { expiresIn: env.jwtExpiresIn });
+    const payload = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    };
 
+    const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
+      expiresIn: process.env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"],
+    });
     return res.status(200).json({ token, user: payload });
   } catch (error) {
     return res.status(500).json({ message: "Failed to log in." });

@@ -1,13 +1,17 @@
+import dotenv from "dotenv";
 import app from "./app";
-import { connectDatabase } from "./config/database";
-import { env } from "./config/env";
+import { connectDB } from "./config/db";
+
+dotenv.config();
 
 async function startServer() {
+  const port = Number(process.env.PORT ?? 5000);
+
   try {
-    await connectDatabase();
-    app.listen(env.port, () => {
+    await connectDB();
+    app.listen(port, () => {
       // eslint-disable-next-line no-console
-      console.log(`Server listening on port ${env.port}`);
+      console.log(`Server running on port ${port}`);
     });
   } catch (error) {
     // eslint-disable-next-line no-console

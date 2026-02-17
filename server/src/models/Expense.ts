@@ -1,4 +1,4 @@
-import { model, Schema, type Document, type Types } from "mongoose";
+import { Schema, model, type Document, Types } from "mongoose";
 
 export interface IExpense extends Document {
   employee: Types.ObjectId;
@@ -7,31 +7,61 @@ export interface IExpense extends Document {
   expenseDate: Date;
   paymentMethod: string;
   vendor: string;
-  description: string;
+  description?: string;
   status: "pending" | "approved" | "rejected";
-  approvedBy: Types.ObjectId | null;
-  createdAt: Date;
-  updatedAt: Date;
+  approvedBy?: Types.ObjectId | null;
 }
 
 const expenseSchema = new Schema<IExpense>(
   {
-    employee: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    category: { type: String, required: true, trim: true },
-    amount: { type: Number, required: true, min: 0 },
-    expenseDate: { type: Date, required: true },
-    paymentMethod: { type: String, required: true, trim: true },
-    vendor: { type: String, required: true, trim: true },
-    description: { type: String, default: "", trim: true },
+    employee: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    expenseDate: {
+      type: Date,
+      required: true,
+    },
+    paymentMethod: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    vendor: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
       default: "pending",
-      required: true,
     },
-    approvedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    approvedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  }
 );
 
 export const Expense = model<IExpense>("Expense", expenseSchema);
